@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet" />
+    <style>
+        .header__text {
+            font-size: 70px;
+        }
+
+        .body__text {
+            font-size: 50px;
+        }
+
+        .cvt-highlight {
+            background-color: #5C6BC0;
+            color: white;
+        }
+    </style>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui" />
+</head>
+
+<body>
+    <div id="app">
+        <v-app>
+            <v-main>
+                <template>
+
+                    <v-img src="sam-mcghee-KieCLNzKoBo-unsplash.jpg" height="505"
+                        gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)">
+
+                        <v-container>
+                            <h1 class="header__text mt-15 white--text">Search your Text <br>
+                                Video here!</h1>
+                        </v-container>
+
+                    </v-img>
+
+                    <v-container class="mt-n16">
+                        <v-card class="align-content-center" color="indigo lighten-1">
+                            <v-toolbar dark color="indigo lighten-1">
+                                <v-toolbar-title class="pr-2">Search</v-toolbar-title>
+                                <v-text-field v-model="inputKey" label="Type Something" flat solo-inverted hide-details>
+                                </v-text-field>
+                            </v-toolbar>
+                        </v-card>
+                    </v-container>
+
+                    <div v-if="inputKey == ''">
+                        <v-container>
+                            <v-row class="mt-15 mb-15">
+                                <v-col cols="12" sm="6">
+                                    <h1 class="body__text ml-15">Waiting for you<br> to <span
+                                            class="primary--text">Type!</span>
+                                    </h1>
+                                </v-col>
+                                <v-col cols="12" sm="6">
+                                    <v-img src="undraw_font_kwpk.svg" width="400">
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </div>
+
+                    <div v-else="">
+                        <v-container>
+                            <v-row>
+                                <v-col cols="12" sm="12">
+                                    <h3>Result for : {{ inputKey }}</h3>
+                                </v-col>
+
+                                <v-col cols="12" sm="4" v-for="(result, i) in results" :key="i">
+                                    <v-card class="d-flex" max-width="344" min-height="140">
+                                        <v-card-text>
+                                            <div v-html="result.text"></div>
+                                        </v-card-text>
+                                        <v-card-actions class="d-flex align-content-end flex-wrap">
+                                            <v-btn class="ma-2" outlined color="deep-purple accent-4"
+                                                :href="`${url}&t=${result.start}`" target="_blank">
+                                                Detail
+                                            </v-btn>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-col>
+
+                                <v-col cols="12" sm="12">
+                                    <template>
+                                        <div class="text-center">
+                                            <v-pagination v-model="pagination.page" :length="pagination.total"
+                                                @input="onPageChange" :total-visible="7">
+                                            </v-pagination>
+                                        </div>
+                                    </template>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </div>
+
+                    <v-footer dark padless class="mt-15">
+                        <v-card flat tile class="indigo lighten-1 white--text text-center">
+                            <v-card-text>
+                                <v-btn v-for="icon in icons" :key="icon" class="mx-4 white--text" icon>
+                                    <v-icon size="24px">{{ icon }}</v-icon>
+                                </v-btn>
+                            </v-card-text>
+
+                            <v-card-text class="white--text pt-0">
+                                Phasellus feugiat arcu sapien, et iaculis ipsum elementum
+                                sit amet. Mauris cursus commodo interdum. Praesent ut
+                                risus eget metus luctus accumsan id ultrices nunc. Sed at
+                                orci sed massa consectetur dignissim a sit amet dui. Duis
+                                commodo vitae velit et faucibus. Morbi vehicula lacinia
+                                malesuada. Nulla placerat augue vel ipsum ultrices, cursus
+                                iaculis dui sollicitudin. Vestibulum eu ipsum vel diam
+                                elementum tempor vel ut orci. Orci varius natoque
+                                penatibus et magnis dis parturient montes, nascetur
+                                ridiculus mus.
+                            </v-card-text>
+
+                            <v-divider></v-divider>
+
+                            <v-card-text class="white--text">
+                                {{ new Date().getFullYear() }} — <strong>Lutfi Alamsyah</strong>
+                            </v-card-text>
+                        </v-card>
+                    </v-footer>
+                </template>
+            </v-main>
+        </v-app>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="index.js"></script>
+    <script>
+        new Vue({
+            el: "#app",
+            vuetify: new Vuetify(),
+            data: {
+                icons: [
+                    "mdi-facebook",
+                    "mdi-twitter",
+                    "mdi-linkedin",
+                    "mdi-instagram",
+                ],
+                url: 'https://www.youtube.com/watch?v=klnvttPfOUM',
+                inputKey: '',
+                results: [],
+                pagination: {
+                    first: null,
+                    last: null,
+                    prev: null,
+                    next: null,
+                    total: 0,
+                    page: null
+                },
+            },
+            watch: {
+                inputKey: pDebounce(async function tanganiinputKey(inputKey) {
+                    if (inputKey && inputKey.length >= 3) {
+                        await this.cari(inputKey, this.url);
+                    } else {
+                        this.clearResult();
+                    }
+                }, 250),
+            },
+            methods: {
+                async cari(inputKey, url) {
+                    try {
+                        const respon = await fetch(
+                                `https://cari-teks-video-api.vercel.app/api/search?page=` +
+                                this.pagination.page + `&q=` + (inputKey = undefined ? inputKey :
+                                    this.inputKey) +
+                                `&url=` + (url = undefined ? url : this.url)
+                            )
+                            .then((respon) => respon.json())
+                            .then((respon) => {
+                                this.results = respon.data
+                                this.pagination.first = respon.first
+                                this.pagination.last = respon.last
+                                this.pagination.prev = respon.prev
+                                this.pagination.next = respon.next
+                                this.pagination.total = respon.total
+                                this.pagination.page = respon.page
+                            });
+                    } catch (error) {
+                        console.log(error);
+                    }
+                },
+                clearResult() {
+                    this.results = [];
+                },
+
+                onPageChange() {
+                    this.cari();
+                }
+            },
+            mounted() {
+                this.cari();
+            },
+        });
+    </script>
+</body>
+
+</html>
